@@ -1,10 +1,12 @@
 package com.aleshkacd.controller;
 
+import com.aleshkacd.booking.client.dto.BookingResponseDTO;
 import com.aleshkacd.entity.MovieShow;
 import com.aleshkacd.service.MovieShowService;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -20,10 +22,9 @@ public class MovieShowController {
     }
 
     @PostMapping("/{id}/book")
-    public String bookSeat(@PathVariable("id") Integer movieId,
-                            @RequestBody BookingData bookingData){
-        movieShowService.bookSeat(movieId, bookingData.getUserPhone(), bookingData.getSeatNum());
-        return "Place was booked";
+    public ResponseEntity<BookingResponseDTO> bookSeat(@PathVariable("id") Integer movieId,
+                                                       @RequestBody BookingData bookingData) {
+        return movieShowService.bookSeat(movieId, bookingData.getUserPhone(), bookingData.getSeatNum());
     }
 
     @GetMapping
