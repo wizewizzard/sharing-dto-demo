@@ -1,0 +1,9 @@
+services:
+  apps:
+    container_name: movie-apps
+    image: movie-apps-image
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    ports:
+      - 8080:8080
