@@ -28,7 +28,7 @@ public class MovieShowController {
     }
 
     @GetMapping
-    public Collection<MovieShow> getUpcomingMovieShows(){
+    public Map<Integer, MovieShow> getUpcomingMovieShows(){
         return movieShowService.getUpcomingMovieShows();
     }
 

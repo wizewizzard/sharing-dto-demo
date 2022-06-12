@@ -56,11 +56,24 @@ public class MovieShowService {
         }
     }
 
-    public Collection<MovieShow> getUpcomingMovieShows(){
+    public ResponseEntity<SeatsStatusResponse> getSeatsStatusForShow(Integer movieShowId){
+        MovieShow movieShow = movieShows.get(movieShowId);
+        if(movieShow != null){
+            if(movieShow.startsAt().isAfter(LocalDateTime.now()))
+                return seatBooker.getSeatsStatus(movieShow.hallId());
+            else
+                throw new MovieShowException("Data for this show is not available");
+        }
+        else{
+            throw new MovieShowException("Movie show with this id does not exist");
+        }
+    }
+
+    public Map<Integer, MovieShow> getUpcomingMovieShows(){
         return movieShows
-                .values()
+                .entrySet()
                 .stream()
-                .filter(movieShow -> movieShow.startsAt().isAfter(LocalDateTime.now()))
-                .toList();
+                .filter(e -> e.getValue().startsAt().isAfter(LocalDateTime.now()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 }
