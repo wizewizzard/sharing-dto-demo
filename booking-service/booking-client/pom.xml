@@ -16,5 +16,8 @@
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
+    <build>
+        <finalName>booking-service-client</finalName>
+    </build>
 
 </project>
