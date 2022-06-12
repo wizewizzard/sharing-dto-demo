@@ -13,15 +13,14 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class MovieShowService {
 
-    private final Map<Integer, MovieShow> movieShows = new HashMap<>();
+    private final List<MovieShow> movieShows = new ArrayList<>();
 
     private final ISeatBookingClient seatBooker;
 
@@ -33,10 +32,10 @@ public class MovieShowService {
     @PostConstruct
     public void fillData(){
         LocalDateTime currentDT = LocalDateTime.now();
-        movieShows.put(1, new MovieShow(236, 22, currentDT.minusHours(10)));
-        movieShows.put(2, new MovieShow(897, 22, currentDT.plusDays(1)));
-        movieShows.put(3, new MovieShow(741,4, currentDT.plusHours(2)));
-        movieShows.put(4, new MovieShow(77, 8, currentDT.plusMinutes(55)));
+        movieShows.add( new MovieShow(1,236, 22, currentDT.minusHours(10)));
+        movieShows.add( new MovieShow(2,897, 22, currentDT.plusDays(1)));
+        movieShows.add( new MovieShow(3,741,4, currentDT.plusHours(2)));
+        movieShows.add( new MovieShow(4,77, 8, currentDT.plusMinutes(55)));
     }
 
     public ResponseEntity<BookingResponse> bookSeat(Integer movieShowId, String userPhone, Integer seatNum){
@@ -70,11 +69,10 @@ public class MovieShowService {
         }
     }
 
-    public Map<Integer, MovieShow> getUpcomingMovieShows(){
+    public Collection<MovieShow> getUpcomingMovieShows(){
         return movieShows
-                .entrySet()
                 .stream()
-                .filter(e -> e.getValue().startsAt().isAfter(LocalDateTime.now()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .filter(e -> e.startsAt().isAfter(LocalDateTime.now()))
+                .collect(Collectors.toList());
     }
 }
