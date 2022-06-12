@@ -1,7 +1,7 @@
 package com.aleshkacd.service;
 
-import com.aleshkacd.booking.client.dto.BookingRequestDTO;
-import com.aleshkacd.booking.client.dto.BookingResponseDTO;
+import com.aleshkacd.booking.client.dto.BookingRequest;
+import com.aleshkacd.booking.client.dto.BookingResponse;
 import com.aleshkacd.exception.BookingException;
 import com.aleshkacd.entity.Seat;
 import com.aleshkacd.booking.client.dto.SeatsStatusResponse;
@@ -69,11 +69,9 @@ public class BookingService {
 
         log.info("Saving user phone {}...", phoneNumber);
         seat.setState(Seat.State.BOOKED);
-        return new ResponseEntity<>(new BookingResponseDTO(
+        return new ResponseEntity<>(new BookingResponse(
                 "Seat in hall %d with number %d was booked".formatted(hallId, seatNum)
         ), HttpStatus.ACCEPTED);
-
-
     }
 
 }

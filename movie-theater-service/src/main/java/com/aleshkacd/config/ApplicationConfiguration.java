@@ -1,6 +1,6 @@
 package com.aleshkacd.config;
 
-import com.aleshkacd.booking.client.BookingService;
+import com.aleshkacd.booking.client.BookingServiceClientImpl;
 import com.aleshkacd.exception.BookingResponseErrorHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,7 +18,7 @@ public class ApplicationConfiguration {
     }
 
     @Bean
-    public BookingService bookingService(@Qualifier("bookingRestTemplate") RestTemplate bookingRestTemplate){
-        return new BookingService(bookingRestTemplate);
+    public BookingServiceClientImpl bookingService(@Qualifier("bookingRestTemplate") RestTemplate bookingRestTemplate){
+        return new BookingServiceClientImpl(bookingRestTemplate);
     }
 }

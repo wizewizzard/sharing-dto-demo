@@ -1,8 +1,9 @@
 package com.aleshkacd.service;
 
-import com.aleshkacd.booking.client.IBookSeat;
-import com.aleshkacd.booking.client.dto.BookingRequestDTO;
-import com.aleshkacd.booking.client.dto.BookingResponseDTO;
+import com.aleshkacd.booking.client.ISeatBookingClient;
+import com.aleshkacd.booking.client.dto.BookingRequest;
+import com.aleshkacd.booking.client.dto.BookingResponse;
+import com.aleshkacd.booking.client.dto.SeatsStatusResponse;
 import com.aleshkacd.entity.MovieShow;
 import com.aleshkacd.exception.MovieShowException;
 import lombok.extern.slf4j.Slf4j;
@@ -12,9 +13,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -22,10 +23,10 @@ public class MovieShowService {
 
     private final Map<Integer, MovieShow> movieShows = new HashMap<>();
 
-    private final IBookSeat seatBooker;
+    private final ISeatBookingClient seatBooker;
 
     @Autowired
-    public MovieShowService(IBookSeat seatBooker) {
+    public MovieShowService(ISeatBookingClient seatBooker) {
         this.seatBooker = seatBooker;
     }
 
@@ -38,13 +39,13 @@ public class MovieShowService {
         movieShows.put(4, new MovieShow(77, 8, currentDT.plusMinutes(55)));
     }
 
-    public ResponseEntity<BookingResponseDTO> bookSeat(Integer movieShowId, String userPhone, Integer seatNum){
+    public ResponseEntity<BookingResponse> bookSeat(Integer movieShowId, String userPhone, Integer seatNum){
         MovieShow movieShow = movieShows.get(movieShowId);
         if(movieShow != null){
             //Booking for a show is allowed if there's more than one hour left until the show starts
             if(movieShow.startsAt().isAfter(LocalDateTime.now().plusHours(1))){
                 log.info("Trying to book the seat... Calling to another service");
-                BookingRequestDTO requestDTO = new BookingRequestDTO(movieShow.hallId(), userPhone, seatNum);
+                BookingRequest requestDTO = new BookingRequest(movieShow.hallId(), userPhone, seatNum);
                 return seatBooker.bookSeat(requestDTO);
             }
             else {

@@ -1,6 +1,7 @@
 package com.aleshkacd.controller;
 
-import com.aleshkacd.booking.client.dto.BookingResponseDTO;
+import com.aleshkacd.booking.client.dto.BookingResponse;
+import com.aleshkacd.booking.client.dto.SeatsStatusResponse;
 import com.aleshkacd.entity.MovieShow;
 import com.aleshkacd.service.MovieShowService;
 import lombok.Data;
@@ -9,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/movie-show")
@@ -22,14 +23,19 @@ public class MovieShowController {
     }
 
     @PostMapping("/{id}/book")
-    public ResponseEntity<BookingResponseDTO> bookSeat(@PathVariable("id") Integer movieId,
-                                                       @RequestBody BookingData bookingData) {
-        return movieShowService.bookSeat(movieId, bookingData.getUserPhone(), bookingData.getSeatNum());
+    public ResponseEntity<BookingResponse> bookSeat(@PathVariable("id") Integer movieShowId,
+                                                    @RequestBody BookingData bookingData) {
+        return movieShowService.bookSeat(movieShowId, bookingData.getUserPhone(), bookingData.getSeatNum());
     }
 
     @GetMapping
     public Map<Integer, MovieShow> getUpcomingMovieShows(){
         return movieShowService.getUpcomingMovieShows();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<SeatsStatusResponse> getMovieShowSeatsStatus(@PathVariable("id") Integer movieShowId){
+        return movieShowService.getSeatsStatusForShow(movieShowId);
     }
 
     @Data
