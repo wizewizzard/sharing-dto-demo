@@ -2,6 +2,7 @@ package com.aleshkacd.controller;
 
 import com.aleshkacd.booking.client.dto.BookingRequestDTO;
 import com.aleshkacd.booking.client.dto.BookingResponseDTO;
+import com.aleshkacd.booking.client.dto.SeatsStatusResponse;
 import com.aleshkacd.service.BookingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,11 @@ public class BookingController {
     @Autowired
     public BookingController(BookingService bookingService) {
         this.bookingService = bookingService;
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<SeatsStatusResponse> getSeatsStatus(@PathVariable("id") Integer hallId){
+        return bookingService.getSeats(hallId);
     }
 
     @PostMapping

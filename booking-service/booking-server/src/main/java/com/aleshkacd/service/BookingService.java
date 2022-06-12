@@ -2,8 +2,9 @@ package com.aleshkacd.service;
 
 import com.aleshkacd.booking.client.dto.BookingRequestDTO;
 import com.aleshkacd.booking.client.dto.BookingResponseDTO;
-import com.aleshkacd.booking.client.exception.BookingException;
+import com.aleshkacd.exception.BookingException;
 import com.aleshkacd.entity.Seat;
+import com.aleshkacd.booking.client.dto.SeatsStatusResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +43,19 @@ public class BookingService {
         ));
     }
 
-    public ResponseEntity<BookingResponseDTO> bookSeat(BookingRequestDTO bookingData){
+    public ResponseEntity<SeatsStatusResponse> getSeats(Integer hallId){
+        List<Seat> seats = seatsStatus.get(hallId);
+        if(seats == null || seats.size() == 0)
+            throw new BookingException("No seats available for given hall");
+        SeatsStatusResponse response = new SeatsStatusResponse(
+                seats
+                .stream()
+                .map(seat -> new SeatsStatusResponse.SeatDTO(seat.getNumber(), seat.getState().toString()))
+                .toList());
+        return ResponseEntity.ok(response);
+    }
+
+    public ResponseEntity<BookingResponse> bookSeat(BookingRequest bookingData){
         Integer hallId = bookingData.hallId();
         Integer seatNum = bookingData.seatNum();
         String phoneNumber = bookingData.userPhone();
@@ -52,7 +65,7 @@ public class BookingService {
                 .filter(s -> Objects.equals(s.getNumber(), seatNum))
                 .filter(s -> s.getState().equals(Seat.State.FREE))
                 .findFirst()
-                .orElseThrow(() -> new BookingException("Seat with number %d in hall %d can not be booked".formatted(seatNum, hallId )));
+                .orElseThrow(() -> new BookingException("Seat with number %d in hall %d can not be booked".formatted(seatNum, hallId)));
 
         log.info("Saving user phone {}...", phoneNumber);
         seat.setState(Seat.State.BOOKED);
